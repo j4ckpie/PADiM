@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="P01Pogoda/P01Pogoda.csproj" />
+  <Project Path="P02WeatherForecast/P02WeatherForecast.csproj" />
+  <Project Path="P03WeatherForecastWPF.Client/P03WeatherForecastWPF.Client.csproj" />
+</Solution>
