@@ -58,6 +58,8 @@
                 <Button x:Name="btnAsync5" Content="6. Async: pasek postępu" Click="btnAsync5_Click" />
                 <Button x:Name="btnAsync6" Style="{StaticResource AccentButtonStyle}"
                         Content="7. Async: gotowa metoda GetTemperatureAsync (zalecane)" Click="btnAsync6_Click" />
+                <Button x:Name="btnCancel" Style="{StaticResource AccentButtonStyle}"
+                        Content="Anuluj" IsEnabled="False" Click="btnCancel_Click" />
 
                 <ProgressBar x:Name="pbProgress" Height="18" Margin="4" />
             </StackPanel>

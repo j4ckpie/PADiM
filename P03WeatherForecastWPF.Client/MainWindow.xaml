@@ -15,6 +15,7 @@
             <Label Content="Miasto:" />
             <TextBox x:Name="txtCity" Text="Warszawa" />
             <Button x:Name="btnSearch" Content="Szukaj" Click="btnSearch_Click" Margin="0,4" />
+            <Button x:Name="btnFavorite" Content="Ulubione" Click="btnFavorite_Click" Margin="0,0,0,4" />
             <ListBox x:Name="lbCities" Height="260"
                      DisplayMemberPath="FullName"
                      SelectionChanged="lbCities_SelectionChanged" />

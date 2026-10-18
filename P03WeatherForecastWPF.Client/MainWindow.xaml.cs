@@ -1,6 +1,8 @@
 ﻿// P03WeatherForecastWPF.Client/MainWindow.xaml.cs
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Http;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +19,10 @@ public partial class MainWindow : Window
 {
     private readonly OpenMeteoService _openMeteoService;
 
+    private readonly ObservableCollection<City> _favorites = new();
+
+    private readonly string _favoritesPath =  Path.Combine(AppContext.BaseDirectory, "favorties.json");
+
     public MainWindow()
     {
         InitializeComponent();
@@ -31,6 +37,7 @@ public partial class MainWindow : Window
         string language = configuration["AppSettings:DefaultLanguage"] ?? "en";
 
         _openMeteoService = new OpenMeteoService(new HttpClient(), language);
+        LoadFavorites();
     }
 
     private async void btnSearch_Click(object sender, RoutedEventArgs e)
@@ -56,6 +63,28 @@ public partial class MainWindow : Window
         {
             btnSearch.IsEnabled = true;
         }
+    }
+
+    private async void btnFavorite_Click(object sender, RoutedEventArgs e)
+    {
+        if(lbCities.SelectedItem is not City selectedCity)
+        {
+            tbStatus.Text = "Najpierw zaznacz miasto, które chcesz dodać do ulubionych";
+            return;
+        }
+
+        bool alreadyAdded = _favorites.Any(f =>
+        f.Latitude == selectedCity.Latitude && f.Longitude == selectedCity.Longitude);
+
+        if(alreadyAdded)
+        {
+            tbStatus.Text = $"{selectedCity.Name} jest już w ulubionych!";
+            return;
+        }
+
+        _favorites.Add(selectedCity);
+        SaveFavorties();
+        tbStatus.Text = $"Dodano {selectedCity.Name} do ulubionych!";
     }
 
     private async void lbCities_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -88,5 +117,29 @@ public partial class MainWindow : Window
         {
             tbStatus.Text = $"Błąd połączenia: {ex.Message}";
         }
+    }
+
+    private void SaveFavorties()
+    {
+        string json = JsonSerializer.Serialize(_favorites, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(_favoritesPath, json);
+    }
+
+    private void LoadFavorites()
+    {
+        if(!File.Exists(_favoritesPath)) { return; }
+        
+        string json = File.ReadAllText(_favoritesPath);
+
+        if(string.IsNullOrWhiteSpace(json)) { return; }
+
+        List<City>? loaded = JsonSerializer.Deserialize<List<City>>(json);
+
+        foreach(City city in loaded ?? [])
+        {
+            _favorites.Add(city);
+        }
+
+        lbCities.ItemsSource = _favorites;
     }
 }

@@ -13,6 +13,8 @@ public partial class MainWindow : Window
 {
     private readonly WeatherForecastService _service = new();
 
+    private CancellationTokenSource? _cts;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -189,33 +191,53 @@ public partial class MainWindow : Window
     // ----- 7. ASYNC: gotowa metoda asynchroniczna (ZALECANE) -----
     // Biblioteka ma metodę async (GetStringAsync), więc nie potrzebujemy Task.Run:
     // podczas czekania na sieć żaden wątek nie jest zajęty. Najczystszy i najtańszy wariant.
+    // ----- 7. ASYNC: gotowa metoda asynchroniczna + anulowanie -----
     private async void btnAsync6_Click(object sender, RoutedEventArgs e)
     {
         Reset();
         string[] cities = GetCities();
         pbProgress.Maximum = cities.Length;
-        btnAsync6.IsEnabled = false;   // chronimy się przed podwójnym kliknięciem
+
+        _cts = new CancellationTokenSource();
+        btnAsync6.IsEnabled = false;
+        btnCancel.IsEnabled = true;
 
         try
         {
             foreach (string city in cities)
             {
                 Log($"Pobieram {city}...");
-                double temperature = await _service.GetTemperatureAsync(city);
+                double temperature = await _service.GetTemperatureAsync(city, _cts.Token);
                 pbProgress.Value += 1;
                 AppendResult(city, temperature);
             }
 
             Log("Gotowe");
         }
+        catch (OperationCanceledException) when (_cts!.IsCancellationRequested)
+        {
+            Log("Anulowano przez użytkownika");
+        }
+        catch (OperationCanceledException)
+        {
+            Log("Przekroczono czas oczekiwania na serwer");
+        }
+
         catch (Exception ex)
         {
-            // Wyjątek z metody async "wraca" do await – możemy go złapać zwykłym try/catch
             Log($"Błąd: {ex.Message}");
         }
         finally
         {
+            _cts.Dispose();
+            _cts = null;
             btnAsync6.IsEnabled = true;
+            btnCancel.IsEnabled = false;
         }
+    }
+
+    private void btnCancel_Click(object sender, RoutedEventArgs e)
+    {
+        _cts?.Cancel();
     }
 }

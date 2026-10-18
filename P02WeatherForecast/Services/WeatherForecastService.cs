@@ -44,9 +44,9 @@ public class WeatherForecastService
     /// Wariant 2: ASYNCHRONICZNY "prawdziwy". Korzystamy z gotowej metody GetStringAsync,
     /// która nie blokuje żadnego wątku podczas czekania na sieć (I/O-bound).
     /// </summary>
-    public async Task<double> GetTemperatureAsync(string city)
+    public async Task<double> GetTemperatureAsync(string city, CancellationToken token = default)
     {
-        string text = await _httpClient.GetStringAsync(BuildUrl(city));
+        string text = await _httpClient.GetStringAsync(BuildUrl(city), token);
         return ParseCelsius(text);
     }
 
