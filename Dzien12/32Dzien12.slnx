@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="P03WeatherForecastWPF.Client/P03WeatherForecastWPF.Client.csproj" />
+  <Project Path="P04Delegaty/P04Delegaty.csproj" />
+</Solution>
