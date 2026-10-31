@@ -1,4 +1,5 @@
 // K07AsyncCommand/DownloadViewModel.cs
+using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -20,16 +21,20 @@ public partial class DownloadViewModel : ObservableObject
     public partial int Clicks { get; set; }
 
     // Końcówka "Async" jest obcinana: powstaje DownloadCommand
-    [RelayCommand]
-    private async Task DownloadAsync()
+    [RelayCommand(IncludeCancelCommand = true)]
+    private async Task DownloadAsync(CancellationToken token)
     {
         IsBusy = true;
         try
         {
             // Udajemy wolne zapytanie do internetu. Okno pozostaje responsywne,
             // bo await oddaje wątek UI na czas czekania.
-            await Task.Delay(TimeSpan.FromSeconds(3));
+            await Task.Delay(TimeSpan.FromSeconds(3), token);
             Result = $"Pobrano o {DateTime.Now:HH:mm:ss}";
+        }
+        catch (OperationCanceledException)
+        {
+            Result = $"Anulowano";
         }
         finally
         {

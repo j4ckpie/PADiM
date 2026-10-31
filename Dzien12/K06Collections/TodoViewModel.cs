@@ -12,7 +12,10 @@ namespace K06Collections;
 public partial class TodoViewModel : ObservableObject
 {
     // Właściwość tylko do odczytu: podmieniamy zawartość kolekcji, nigdy sam obiekt
-    public ObservableCollection<string> Tasks { get; } = ["Kupić mleko", "Oddać książkę"];
+    public ObservableCollection<TodoItem> Tasks { get; } = [
+        new(){ Title = "Kupić mleko" },
+        new(){ Title = "Zrobić zadanie z C#" },
+    ];
 
     // Tekst z pola "nowe zadanie". Po każdej zmianie przycisk Dodaj sprawdza CanExecute.
     [ObservableProperty]
@@ -22,12 +25,12 @@ public partial class TodoViewModel : ObservableObject
     // Element zaznaczony na liście (null, gdy nic nie zaznaczono)
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveCommand))]
-    public partial string? SelectedTask { get; set; }
+    public partial TodoItem? SelectedTask { get; set; }
 
     [RelayCommand(CanExecute = nameof(CanAdd))]
     private void Add()
     {
-        Tasks.Add(NewTask.Trim());
+        Tasks.Add(new(){ Title = NewTask.Trim() });
         NewTask = string.Empty;   // czyścimy pole – TextBox odświeży się przez binding
     }
 

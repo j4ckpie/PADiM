@@ -25,6 +25,7 @@ public partial class App : Application
 
         // Serwisy
         builder.Services.AddSingleton<IClock, SystemClock>();
+        builder.Services.AddSingleton<IGreetingService, ClassicGreet>();
         // Podmiana implementacji – jedna linia (zakomentuj SystemClock, odkomentuj FixedClock):
         // builder.Services.AddSingleton<IClock, FixedClock>();
 

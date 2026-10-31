@@ -19,6 +19,12 @@
 
         <!-- ItemsSource: skąd brać elementy; SelectedItem: dokąd zapisać zaznaczenie -->
         <ListBox ItemsSource="{Binding Tasks}"
-                 SelectedItem="{Binding SelectedTask}" />
+                 SelectedItem="{Binding SelectedTask}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Content="{Binding Title}" IsChecked="{Binding IsDone}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </DockPanel>
 </Window>

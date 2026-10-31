@@ -13,11 +13,13 @@ namespace K10DiWpf.ViewModels;
 public partial class MainViewModel : ObservableObject
 {
     private readonly IClock _clock;
+    private readonly IGreetingService _greeting;
     private readonly GreetingOptions _options;
 
-    public MainViewModel(IClock clock, IOptions<GreetingOptions> options)
+    public MainViewModel(IClock clock, IGreetingService greeting, IOptions<GreetingOptions> options)
     {
         _clock = clock;
+        _greeting = greeting;
         _options = options.Value;   // IOptions<T>.Value to gotowy obiekt z wartościami z JSON
 
         Refresh();
@@ -33,12 +35,7 @@ public partial class MainViewModel : ObservableObject
     private void Refresh()
     {
         DateTime now = _clock.Now;
-
-        string timeOfDay = _options.Language == "en"
-            ? (now.Hour < 12 ? "Good morning" : "Good evening")
-            : (now.Hour < 12 ? "Dzień dobry" : "Dobry wieczór");
-
-        Message = $"{timeOfDay}, {_options.UserName}!";
+        Message = _greeting.Greet(_options.UserName, now);
         ClockInfo = $"Zegar: {_clock.GetType().Name}, czas: {now:HH:mm:ss}";
     }
 }

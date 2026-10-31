@@ -16,12 +16,15 @@ public partial class CounterViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(DecrementCommand))]
     public partial int Value { get; set; }
 
+    [ObservableProperty]
+    public partial int Step { get; set; } = 1;
+
     [RelayCommand]
-    private void Increment() => Value++;
+    private void Increment() => Value += Step;
 
     // CanExecute: przycisk "-1" jest aktywny tylko, gdy Value > 0
     [RelayCommand(CanExecute = nameof(CanDecrement))]
-    private void Decrement() => Value--;
+    private void Decrement() => Value -= Step;
 
     private bool CanDecrement() => Value > 0;
 
