@@ -2,7 +2,7 @@
 <Window x:Class="K04RelayCommand.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="K04 – [RelayCommand] {Binding Step}" Height="220" Width="320">
+        Title="K04 – [RelayCommand]" Height="220" Width="320">
     <StackPanel Margin="16">
         <TextBlock Text="Wartość licznika:" />
         <TextBlock Text="{Binding Value}" FontSize="32" FontWeight="Bold" />
